@@ -1,0 +1,142 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="GitDescribe" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <CommitHash ParameterType="System.String" Output="True"/>
+      <ShortCommitHash ParameterType="System.String" Output="True"/>
+      <FunctionalVersion ParameterType="System.String" Output="True"/>
+      <FunctionalVersionSuffix ParameterType="System.String" Output="True"/>
+      <IsDirtyCommit ParameterType="System.Boolean" Output="True"/>
+      <IsVersioned ParameterType="System.Boolean" Output="True"/>
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System.Core" />
+      <Using Namespace="System" />
+      <Using Namespace="System.Diagnostics" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Text.RegularExpressions" />
+      <Code Type="Class" Language="cs">
+        <![CDATA[
+                  using System;
+                  using System.Diagnostics;
+                  using System.IO;
+                  using System.Text.RegularExpressions;
+                  using Microsoft.Build.Framework;
+                  using Microsoft.Build.Utilities;
+                  
+                  public class GitDescribe : Microsoft.Build.Utilities.Task
+                  {
+                    [Output]
+                    public string CommitHash { get; set; }
+                    
+                    [Output]
+                    public string ShortCommitHash { get; set; }
+                    
+                    [Output]
+                    public string FunctionalVersion { get; set; }
+                     
+                    [Output]
+                    public string FunctionalVersionSuffix { get; set; }
+                    
+                    [Output]
+                    public bool IsDirtyCommit { get; set; }
+                    
+                    [Output]
+                    public bool IsVersioned { get; set; }
+                    
+                    public string Git( string aArguments, bool aAll = false )
+                    {
+                      string lResult = "";
+                      using ( Process lProcess = new Process() )
+                      {
+                        lProcess.StartInfo.UseShellExecute = false;
+                        lProcess.StartInfo.FileName = "git";
+                        lProcess.StartInfo.Arguments = aArguments;
+                        lProcess.StartInfo.CreateNoWindow = true;
+                        lProcess.StartInfo.RedirectStandardOutput = true;
+                        try
+                        {
+                          lProcess.Start();
+                        }
+                        catch ( Exception )
+                        {
+                          throw new Exception( "Failed to start 'git'. Please install 'git' from https://git-scm.com/download/win." );
+                        }
+                        if ( aAll )
+                        {
+                          lResult = lProcess.StandardOutput.ReadToEnd();
+                        }
+                        else
+                        {
+                          lResult = lProcess.StandardOutput.ReadLine();
+                        }
+                        lProcess.WaitForExit();
+                      }
+                      return lResult;
+                    }
+                    
+                    public override bool Execute()
+                    {
+                      // Get the commit hash 
+                      var lDescribeResults = Git( "describe --no-match --always --dirty --abbrev=40" );
+                      CommitHash = "unknown-commit";
+                      var lCommitMatch = Regex.Match( lDescribeResults, @"(\w{40})(-dirty)?$" );
+                      IsDirtyCommit = false;
+                      if ( lCommitMatch != null && lCommitMatch.Success )
+                      {
+                        CommitHash = lCommitMatch.Groups[1].Value;
+                        ShortCommitHash = CommitHash.Substring(0, 8);
+                        IsDirtyCommit = lCommitMatch.Groups[2].Value == "-dirty";
+                      }
+                      
+                      var lNow = DateTime.Now;
+                      
+                      FunctionalVersion = "0.0.0";
+                      FunctionalVersionSuffix = String.Empty;
+                      IsVersioned = false;
+                      
+                      //var lTag = Git( "describe --tags --exact-match", true );
+                      var lTag = Git( "tag -l --points-at HEAD", true );
+                      if ( !string.IsNullOrWhiteSpace( lTag ) )
+                      {
+                        // Get the version from the tag
+                        var lMatch = Regex.Match( lTag, @"^v(?:ersion/)?(\d+\.\d+\.\d+)([-+].+)?$", RegexOptions.Multiline );
+                        if ( lMatch != null && lMatch.Success )
+                        {
+                          IsVersioned = true;
+                          FunctionalVersion = lMatch.Groups[1].Value;
+                          FunctionalVersionSuffix = lMatch.Groups[2].Value;
+                        }
+                      }
+                      return true;
+                    }
+                  }
+                ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+  <Target Name="GetVersionFromGit" BeforeTargets="GetAssemblyVersion;GenerateNuspec">
+    <GitDescribe>
+      <Output TaskParameter="CommitHash" PropertyName="CommitHash"/>
+      <Output TaskParameter="ShortCommitHash" PropertyName="ShortCommitHash"/>
+      <Output TaskParameter="FunctionalVersion" PropertyName="FunctionalVersion"/>
+      <Output TaskParameter="FunctionalVersionSuffix" PropertyName="FunctionalVersionSuffix"/>
+      <Output TaskParameter="IsDirtyCommit" PropertyName="IsDirtyCommit"/>
+      <Output TaskParameter="IsVersioned" PropertyName="IsVersioned"/>
+    </GitDescribe>
+    <PropertyGroup Condition="!$(IsVersioned)">
+      <InformationalVersion>0.0.0-$(ShortCommitHash)</InformationalVersion>
+      <InformationalVersion Condition="$(IsDirtyCommit)">$(InformationalVersion)-dirty</InformationalVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition="$(IsVersioned)">
+      <InformationalVersion>$(FunctionalVersion)</InformationalVersion>
+      <InformationalVersion Condition="'$(FunctionalVersionSuffix)'!=''">$(InformationalVersion)$(FunctionalVersionSuffix)</InformationalVersion>
+      <InformationalVersion Condition="$(IsDirtyCommit)">$(InformationalVersion)-dirty</InformationalVersion>
+    </PropertyGroup>
+    <PropertyGroup>
+        <Version>$(InformationalVersion)</Version>
+        <PackageVersion>$(InformationalVersion)</PackageVersion>
+      <Product>$(Product) ($(ShortCommitHash))</Product>
+      <Copyright Condition="'$(Copyright)'==''">© $([System.DateTime]::Now.ToString('yyyy')) $(Company)</Copyright>
+    </PropertyGroup>
+  </Target>
+</Project>

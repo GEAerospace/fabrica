@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\Versioning.targets"/>
+    <PropertyGroup>
+        <Company>GE Aviation Systems LLC</Company>
+        <Authors>$(Company)</Authors>
+
+        <Description>Fabrica is a runtime Type Composition/Dependency Injection system for .NET-based applications.</Description>
+        
+        <TargetFrameworks>net40;net45;net461;net472;net48;netcoreapp3.1</TargetFrameworks>
+        <AssemblyName>GEAviation.Fabrica</AssemblyName>
+        <RootNamespace>GEAviation.Fabrica</RootNamespace>
+
+        <PackageId>GEAviation.Fabrica</PackageId>
+    </PropertyGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="blueprint.xsd">
+            <LogicalName>GEAviation.Fabrica.blueprint.xsd</LogicalName>
+        </EmbeddedResource>
+    </ItemGroup>
+</Project>

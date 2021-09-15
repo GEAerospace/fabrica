@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<blueprint-list xmlns="http://www.geaviation.com/NG/Fabrica">
+  <blueprint namespace="test">
+    <type-aliases>
+      <alias name="type-alias-1">
+        <type fullname="Fabrica.Test.SimpleTestPart" />
+      </alias>
+      <alias name="type-alias-2">
+        <type fullname="Fabrica.Test.SimpleTestPartWithFeature" />
+      </alias>
+      <alias name="type-alias-3">
+        <type fullname="Fabrica.Test.SimpleTestPartWithFeaturesAndProperties" />
+      </alias>
+      <alias name="type-alias-4">
+        <type fullname="Fabrica.Test.SimpleTestPartLocator" />
+      </alias>
+      <alias name="type-alias-5">
+        <type fullname="Fabrica.Test.PropertyUriTestPart" />
+      </alias>
+      <alias name="type-alias-6">
+        <type fullname="Fabrica.Test.SimpleTestPartWithMultipleConstructors" />
+      </alias>
+      <alias name="type-alias-7">
+        <type fullname="Fabrica.Test.SimpleTestPartWithCollections" />
+      </alias>
+      <alias name="type-alias-8">
+        <type fullname="Fabrica.Test.SimpleTestPartWithList" />
+      </alias>
+      <alias name="list-type">
+        <type fullname="System.Collections.Generic.IList`1">
+          <type-param param-name="T" fullname="System.Object" />
+        </type>
+      </alias>
+    </type-aliases>
+    <composites>
+      <composite-def name="TestComposite">
+        <part>
+          <runtime-type-alias name="type-alias-8"/>
+          <features>
+            <feature key="List">
+              <part-list>
+                <part>
+                  <runtime-type-alias name="type-alias-2"/>
+                  <features>
+                    <!--<feature-slot target-key="Object" name="Slot3"/>-->
+                    <feature key="Object">
+                      <name-ref name="TestPartTakesCollections2"/>
+                    </feature>
+                  </features>
+                </part>
+                <part>
+                  <runtime-type-alias name="type-alias-3"/>
+                  <features>
+                    <feature-slot target-key="Object" name="Slot2"/>
+                  </features>
+                  <properties>
+                    <property-slot target-key="Timeout" name="Prop1"/>
+                  </properties>
+                </part>
+                <feature-slot name="Slot3"/>
+                <feature-slot name="Slot4"/>
+                <part>
+                  <runtime-type-alias name="type-alias-2"/>
+                  <features>
+                    <feature-slot target-key="Object" name="Slot1"/>
+                  </features>
+                </part>
+                <part>
+                  <runtime-type-alias name="type-alias-2"/>
+                  <features>
+                    <feature-slot target-key="Object" name="Slot2"/>
+                  </features>
+                </part>
+              </part-list>
+            </feature>
+          </features>
+        </part>
+      </composite-def>
+    </composites>
+    <parts>   
+      <external-part id="93FB0623-744D-4EED-B782-2D5E084D2F8B"/>
+      
+      <undefined-part name="undefined-part" id="FAD4C729-BD01-4E90-BDE8-BC1066509CBD"/>
+
+      <part name="TestPartInstance">
+        <runtime-type-alias name="type-alias-2"/>
+        <features>
+          <feature key="Object">
+            <id-ref id="93FB0623-744D-4EED-B782-2D5E084D2F8B"/>
+          </feature>
+        </features>
+      </part>
+
+      <part name="TestCompositeInstance">
+        <composite-type name="TestComposite"/>
+        <features>
+          <feature key="Slot1">
+            <name-ref name="TestPartTakesCollections"/>
+          </feature>
+          <feature key="Slot2">
+            <name-ref name="example-top-list"/>
+          </feature>
+          <feature key="Slot3">
+            <part>
+              <runtime-type-alias name="type-alias-1"/>
+            </part>
+          </feature>
+          <feature key="Slot4">
+            <constant value="1161984"/>
+          </feature>
+        </features>
+        <properties>
+          <property key="Prop1" value="2:0:1"/> 
+        </properties>
+      </part>
+      
+      <part name="TestPartTakesCollections">
+        <runtime-type-alias name="type-alias-7"/>
+        <features>
+          <feature key="List">
+            <name-ref name="example-top-list"/>
+          </feature>
+          <feature key="Dictionary">
+            <part-dictionary>
+              <key-value key="A">
+                <name-ref name="TestPartInstance"/>
+              </key-value>
+              <key-value key="B">
+                <name-ref name="with.uri.props"/>
+              </key-value>
+              <key-value key="C">
+                <constant value="2452345"/>
+              </key-value>
+            </part-dictionary>
+          </feature>
+        </features>
+      </part>
+      
+      <part name="TestPartTakesCollections2">
+        <runtime-type-alias name="type-alias-7"/>
+        <features>
+          <feature key="List">
+            <part-list>
+              <name-ref name="TestPartInstance"/>
+              <name-ref name="with.uri.props"/>
+            </part-list>
+          </feature>
+          <feature key="Dictionary">
+            <name-ref name="example-top-dictionary"/>
+          </feature>
+        </features>
+      </part>
+      
+      <part-list name="example-top-list" id="34A71630-0F3C-4EED-9F3B-8B936A8C788E">
+        <runtime-type-alias name="list-type"/>
+        <name-ref name="TestPartInstance"/>
+      </part-list>
+      
+      <part-dictionary id="BE9D6193-B989-49F2-87F9-1E2772518FDB" name="example-top-dictionary">
+        <runtime-type fullname="System.Collections.Generic.IDictionary`2">
+          <type-param param-name="TKey" fullname="System.String"/>
+          <type-param param-name="TValue" fullname="System.Object"/>
+        </runtime-type>
+
+        <key-value key="A">
+          <name-ref name="TestPartInstance"/>
+        </key-value>
+        <key-value key="B">
+          <name-ref name="with.uri.props"/>
+        </key-value>
+      </part-dictionary>
+      
+      <part name="TestPartInstance2">
+        <runtime-type-alias name="type-alias-3"/>
+        <features>
+          <feature key="Object">
+            <uri-ref uri="test-scheme://uri-value"/>
+          </feature>
+        </features>
+        <properties>
+          <property key="Timeout" value="0:0:1"/>
+        </properties>
+      </part>
+
+      <part name="PointsToUndefined">
+        <runtime-type-alias name="type-alias-2"/>
+        <features>
+          <feature key="Object">
+            <id-ref id="FAD4C729-BD01-4E90-BDE8-BC1066509CBD"/>
+          </feature>
+        </features>
+      </part>
+
+      <part name="fake.locator" part-locator-scheme="test-scheme">
+        <runtime-type-alias name="type-alias-4"/>
+      </part>
+      
+      <part name="with.uri.props">
+        <runtime-type-alias name="type-alias-5"/>
+        <properties>
+          <property key="DecimalProp" uri="test-scheme://decimal"/>
+          <property key="RegexProp" uri="test-scheme://regex"/>
+          <property key="StringProp" uri="test-scheme://string"/>
+        </properties>
+      </part>
+      
+      <part name="multiple.ctor.1" id="8911742D-2C11-46D7-AD2E-162067E9B298">
+        <runtime-type-alias name="type-alias-6"/>
+        <constructor name="DifferentConstructor"/>
+        <features>
+          <feature key="Object">
+            <uri-ref uri="test-scheme://decimal"/>
+          </feature>
+        </features>
+      </part>
+
+      <part name="multiple.ctor.2">
+        <runtime-type-alias name="type-alias-6"/>
+        <features>
+          <feature key="Object">
+            <id-ref id="8911742D-2C11-46D7-AD2E-162067E9B298"/>
+          </feature>
+        </features>
+      </part>
+      
+      <part name="test.feature.from.string">
+        <runtime-type fullname="Fabrica.Test.FeatureFromStringTestPart"/>
+        <features>
+          <feature key="Decimal">
+            <constant value="-23.45656"/>
+          </feature>
+        </features>
+      </part>
+    </parts>
+  </blueprint>
+</blueprint-list>

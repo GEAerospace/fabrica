@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<blueprint-list xmlns="http://www.geaviation.com/NG/Fabrica">
+  <blueprint namespace="test">
+    <type-aliases>
+      <alias name="type-alias-1">
+        <type fullname="Fabrica.Test.ExamplePart" />
+      </alias>
+      <alias name="type-alias-2">
+        <type fullname="Fabrica.Test.ExamplePart2" />
+      </alias>
+      <alias name="type-alias-3">
+        <type fullname="Fabrica.Test.ExamplePart2">
+          <type-param param-name="TValue" fullname="Fabrica.Test.Fake" />
+        </type>
+      </alias>
+    </type-aliases>
+    <composites>
+      <composite-def name="TestComposite">
+        <part>
+          <runtime-type-alias name="type-alias-1"/>
+          <features>
+            <feature-slot target-key="Test" name="Slot1"/>
+            <feature key="Test2">
+              <part>
+                <runtime-type-alias name="type-alias-2"/>
+                <features>
+                  <feature-slot target-key="Test" name="Slot2"/>
+                </features>
+              </part>
+            </feature>
+          </features>
+          <properties>
+            <property key="TestProp1" value="string"/>
+            <property-slot target-key="TestProp2" name="Prop1"/>
+          </properties>
+        </part>
+      </composite-def>
+    </composites>
+    <parts>     
+      
+      <part-list id="C89414B4-52C1-4DB2-81F6-68751E30C7CB" name="top-list">
+        <runtime-type fullname="System.Collections.Generic.IList`1">
+          <type-param param-name="T" fullname="System.Object" />
+        </runtime-type>
+        <name-ref name="different-external"/>
+        <uri-ref uri="fake-scheme-2://blah"/>
+        <id-ref id="3D559DC1-D4A7-4FE6-93AC-CBB730128D8C"/>
+      </part-list>
+
+      <part-dictionary id="C19CA7EE-45B2-4483-8DDF-CAC18FABCA41" name="top-dictionary">
+        <runtime-type fullname="System.Collections.Generic.IDictionary`2">
+          <type-param param-name="TKey" fullname="System.String"/>
+          <type-param param-name="TValue" fullname="System.Object"/>
+        </runtime-type>
+        <key-value key="item1">
+          <name-ref name="different-external"/>
+        </key-value>
+        <key-value key="item2">
+          <uri-ref uri="fake-scheme-2://blah"/>
+        </key-value>
+        <key-value key="item3">
+          <id-ref id="3D559DC1-D4A7-4FE6-93AC-CBB730128D8C"/>
+        </key-value>
+      </part-dictionary>
+
+      <external-part id="CFDD95B8-2277-425D-81DC-74284B5DFEF5" />
+      <external-part id="3D559DC1-D4A7-4FE6-93AC-CBB730128D8C" part-locator-scheme="fake-scheme-2" />
+
+      <external-part name="extern-with-metadata">
+        <metadata>
+          <data key="key1">
+            <![CDATA[<extern-metadata></extern-metadata>]]>
+          </data>
+        </metadata>
+      </external-part>
+
+      <external-part name="different-external" />
+      <external-part name="different-external-2" part-locator-scheme="fake-scheme-1" />
+      
+      <undefined-part id="BCEC7300-4281-4519-B84B-DC4B255D2F28" name="undefined-part" />
+      
+      <undefined-part name="undefined-with-metadata">
+        <metadata>
+          <data key="key2">
+            <![CDATA[<undefined-metadata></undefined-metadata>]]>
+          </data>
+        </metadata>
+      </undefined-part>
+
+      <part name="Full-Part" id="3840E9B2-E82E-4D61-896E-4E1A8C490C9B" part-locator-scheme="fake-scheme-3">
+        <runtime-type-alias name="type-alias-name" />
+        <features>
+          <feature key="Object">
+            <id-ref id="CFDD95B8-2277-425D-81DC-74284B5DFEF5" />
+          </feature>
+          <feature key="PartList">
+            <part-list>
+              <name-ref name="different-external"/>
+              <uri-ref uri="fake-scheme-2://blah"/>
+              <id-ref id="3D559DC1-D4A7-4FE6-93AC-CBB730128D8C"/>
+            </part-list>
+          </feature>
+          <feature key="PartDictionary">
+            <part-dictionary>
+              <key-value key="Entry1">
+                <id-ref id="BCEC7300-4281-4519-B84B-DC4B255D2F28"/>
+              </key-value>
+              <key-value key="Entry2">
+                <name-ref name="undefined-with-metadata"/>
+              </key-value>
+            </part-dictionary>
+          </feature>
+          <feature key="NestedPart">
+            <part>
+              <runtime-type-alias name="type-alias-3" />
+            </part>
+          </feature>
+        </features>
+        <properties>
+          <property key="TestProp" value="Hi, I'm a prop!" />
+          <property key="TestProp2" value="Hi, I'm a prop too!" />
+        </properties>
+        <metadata>
+          <data key="test-value">
+            <![CDATA[<arbitrary xmlns:blah="http://blah.org">
+              <blah:stuff>
+                <blah:and-things />
+              </blah:stuff>
+              innerdsfghgh
+            </arbitrary>]]>
+          </data>
+        </metadata>
+      </part>
+      
+      <part name="No-Features" id="3CBB254F-ED1D-4EBF-9D08-A934411D83C5">
+        <runtime-type-alias name="type-alias-name" />
+        
+        <properties>
+          <property key="TestProp" value="Hi, I'm part! 'Test1'" />
+        </properties>
+        <metadata>
+          <data key="test-value">
+            <![CDATA[<arbitrary xmlns:blah="http://blah.org">
+              <blah:stuff>
+                <blah:and-things />
+              </blah:stuff>
+              innerdsfghgh
+            </arbitrary>]]>
+          </data>
+        </metadata>
+      </part>
+      
+      <part name="No-Properties" id="AB825139-AD5D-43F3-AFBB-88161591E631">
+        <runtime-type-alias name="type-alias-name" />
+        <features>
+          <feature key="Object">
+            <id-ref id="CFDD95B8-2277-425D-81DC-74284B5DFEF5" />
+          </feature>
+          <feature key="PartList">
+            <part-list>
+              <name-ref name="different-external"/>
+              <uri-ref uri="fake-scheme-2://blah"/>
+              <id-ref id="3D559DC1-D4A7-4FE6-93AC-CBB730128D8C"/>
+            </part-list>
+          </feature>
+          <feature key="PartDictionary">
+            <part-dictionary>
+              <key-value key="Entry1">
+                <id-ref id="BCEC7300-4281-4519-B84B-DC4B255D2F28"/>
+              </key-value>
+              <key-value key="Entry2">
+                <name-ref name="undefined-with-metadata"/>
+              </key-value>
+            </part-dictionary>
+          </feature>
+        </features>
+        <metadata>
+          <data key="test-value">
+            <![CDATA[<arbitrary xmlns:blah="http://blah.org">
+              <blah:stuff>
+                <blah:and-things />
+              </blah:stuff>
+              innerdsfghgh
+            </arbitrary>]]>
+          </data>
+        </metadata>
+      </part>
+      
+      <part name="No-Metadata" id="C203FCD3-5DBC-4F96-A4C8-EF8F8507D277">
+        <runtime-type fullname="Fake.Type">
+          <type-param param-name="TValue" fullname="Fake.Type.Param.Type" />
+        </runtime-type>
+        <features>
+          <feature key="Object">
+            <id-ref id="CFDD95B8-2277-425D-81DC-74284B5DFEF5" />
+          </feature>
+          <feature key="PartList">
+            <part-list>
+              <name-ref name="different-external"/>
+              <uri-ref uri="fake-scheme-2://blah"/>
+              <id-ref id="3D559DC1-D4A7-4FE6-93AC-CBB730128D8C"/>
+            </part-list>
+          </feature>
+          <feature key="PartDictionary">
+            <part-dictionary>
+              <key-value key="Entry1">
+                <id-ref id="BCEC7300-4281-4519-B84B-DC4B255D2F28"/>
+              </key-value>
+              <key-value key="Entry2">
+                <name-ref name="undefined-with-metadata"/>
+              </key-value>
+            </part-dictionary>
+          </feature>
+        </features>
+        <properties>
+          <property key="TestProp" uri="fake-scheme-3://fake-uri" />
+          <property key="TestProp2" value="Hi, I'm a prop too!" />
+        </properties>
+      </part>
+    </parts>
+  </blueprint>
+</blueprint-list>

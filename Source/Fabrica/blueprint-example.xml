@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<blueprint-list xmlns="http://www.geaviation.com/NG/Fabrica">
+  <blueprint namespace="test">
+    <type-aliases>
+      <alias name="type-alias-name">
+        <type fullname="Fabrica.Test.ExamplePart" />
+      </alias>
+      <alias name="type-alias-2">
+        <type fullname="Fabrica.Test.ExamplePart2" />
+      </alias>
+    </type-aliases>
+    <parts>              
+      <external-part id="CFDD95B8-2277-425D-81DC-74284B5DFEF5" />
+      <part name="VSU.FDD.Test1" id="3840E9B2-E82E-4D61-896E-4E1A8C490C9B">
+        <runtime-type-alias name="type-alias-name" />
+        <features>
+          <feature key="Object">
+            <id-ref id="CFDD95B8-2277-425D-81DC-74284B5DFEF5" />
+          </feature>
+        </features>
+        <properties>
+          <property key="TestProp" value="Hi, I'm part! 'Test1'" />
+        </properties>
+        <metadata>
+          <data key="test-value">
+            <arbitrary xmlns:blah="http://blah.org">
+              <blah:stuff>
+                <blah:and-things />
+              </blah:stuff>
+              innerdsfghgh
+            </arbitrary>
+          </data>
+        </metadata>
+      </part>
+    </parts>
+  </blueprint>
+</blueprint-list>
